@@ -2,11 +2,6 @@ var sys = require('sys');
 var fs = require('fs');
 var http = require('http');
 
-// Node-CouchDB: http://github.com/felixge/node-couchdb
-var couchdb = require('./libs/node-couchdb/lib/couchdb');
-var client = couchdb.createClient(5984, 'localhost');
-var db = client.db('test');
-
 // Haml-js: http://github.com/creationix/haml-js
 var haml = require('haml');
 
@@ -99,9 +94,18 @@ function serverMain(request, response){
     if (request.url.search("/public") == 0) 
         getPublicContent(response, request.url);
     else 
+	{
+	        response.writeHead(200, {
+            'Content-Type': 'text/html'
+        });
+		response.end("Q");
+		
+		/*
         if (request.url.search("/getRandomQuote") == 0) 
             showOneQuoteAjax(response);
         else 
             if (request.url == "/") 
                 showOneQuote(response);
+		*/
+	}
 }
