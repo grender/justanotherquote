@@ -1,0 +1,157 @@
+html, body {
+    min-height: 100% !important;
+    min-height: auto;
+    height: 100%;
+    border: none;
+    margin-left: auto;
+    margin-right: auto;
+    /*width:960px;*/
+    font-family: "Segoe UI", sans-serif;
+    /*line-height: 120%;*/
+    /*background-color:#FBFBFB;*/
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    /*
+     padding-left: 10px;
+     padding-right: 10px;
+     так низя!
+     padding-bottom: 10px;
+     padding-top: 10px; */
+}
+
+.wrapper {
+    display: block;
+    position: relative;
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    width: 100%;
+    /*min-width: 960px;*/
+    /* background-color:#F7F7F7;*/
+    /*border: 1px solid #D2D2D2;*/
+}
+
+.gradient {
+    /* Legacy browsers */
+    background: #f7f8f7 url("images/gradient-bg.png") repeat-x top;
+    -o-background-size: 100% 100%;
+    -moz-background-size: 100% 100%;
+    -webkit-background-size: 100% 100%;
+    background-size: 100% 100%;
+    /* Internet Explorer */ *background:
+    #f7f8f7;
+    background:
+    #f7f8f7\0/;
+
+
+
+	filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr=#FFe8e8e7, endColorstr=#FFf7f8f7);
+	}
+	@media all and (min-width: 0px) {
+		.gradient {
+			/* Opera */
+			background: #f7f8f7 url("images/gradient-bg.svg");
+			/* Recent browsers */
+			background-image: -moz-linear-gradient(
+				top,
+				#e8e8e7,
+				#f7f8f7
+			);
+			background-image: -webkit-gradient(
+				linear,
+				left top, left bottom,
+				from(#e8e8e7),
+				to(#f7f8f7)
+			);
+		}
+	}
+	
+.quoteContainer {
+	position:absolute;
+	width:100%;
+	
+	/*
+	top: 50%;
+	height: 10em;
+	margin:0 auto;
+	margin-top:-5em;
+	*/
+}
+	
+.quote {
+	position: absolute;
+	/*margin-left:25%;*/
+}	
+	
+.quoteText	{
+	font-family:"Segoe UI",sans-serif;
+	font-size: 220%;
+	text-align: left;
+}
+
+.quoteSource {
+	font-family:"Segoe UI",sans-serif;
+	font-style: italic;
+	font-size: 110%;
+	text-align: right;
+	margin-top: 1em;
+	margin-left:10em;
+}
+
+.languageSelector {
+	text-align: right;
+	height: 2em;
+	padding-right: 2.5em;
+	padding-top:1em;
+	display:none;
+}
+
+.container {
+	display: block;
+    height: 1%;
+    padding: 0 0 3.0em 0;
+	text-align:center;
+}
+
+.footer {
+	clear: both;
+    margin: -3.0em 0 0 0;
+    height: 3.0em;
+    position: relative;	
+	text-align:right;
+	font-size: 1.2em;
+	vertical-align:bottom;
+	padding-right: 2.5em;	
+}
+
+.helpDiv {
+	position: absolute;
+	width: 500px;
+	height: 200px;
+	border: 3px solid #6e6e6e;
+	background: #bebebe;
+	top: 50%;
+	left: 50%;
+	
+	margin-left: -250px;
+	margin-top: -100px;
+	display:  none;
+}
+
+   a:link {
+    color: #777777; /* Цвет ссылок */
+	text-decoration: none; /* Убираем подчеркивание */
+    border-bottom: 1px dashed #777777; /* Добавляем свою линию */ 
+   }
+   a:visited {
+    color: #777777; /* Цвет ссылок */
+	text-decoration: none; /* Убираем подчеркивание */
+    border-bottom: 1px dashed #777777; /* Добавляем свою линию */ 	
+   }
+   
+   a.noBorder {
+   	border-bottom: 0px; 
+   }
