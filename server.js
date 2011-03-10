@@ -10,7 +10,7 @@ var db = client.db('test');
 // Haml-js: http://github.com/creationix/haml-js
 var haml = require('haml');
 
-http.createServer(serverMain).listen(800);
+http.createServer(serverMain).listen(8807);
 //console.log('Server running at http://127.0.0.1:8000/');
 
 function getPublicContent(response, url){
