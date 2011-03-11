@@ -21,12 +21,16 @@ function getPublicContent(response, url){
     });
 }
 
-function dbGet(path, next){
-	next(null);
-	return;
-    var result = null;
-    var client = http.createClient(5984, "127.0.0.1");
-    var dbReq = client.request("GET", path);
+function dbGet(path, next){   
+    var client = http.createClient(80, "grender.couchone.com");
+    var base64authData = "Basic " + new Buffer("reman:gnmjHkjgmnSdffj56", 'binary').toString('base64');
+    
+    var dbReq = client.request("GET", path, {
+        host: "grender.couchone.com",
+        authorization: base64authData
+    });
+    
+    //var dbReq = client.request("GET", path);
     dbReq.addListener('response', function(dbResp){
         var dbRespBody = "";
         dbResp.addListener("data", function(chunk){
@@ -49,27 +53,26 @@ function showOneQuote(response, forJson){
             'Content-Type': 'text/html'
         });
     
-    dbGet("/test/_all_docs", function(result){
-        if (result==null || result.total_rows == 0) {
+    dbGet("/justanotherquote/_all_docs", function(result){
+        if (result == null || result.total_rows == 0) {
             var quote = {
                 quote: "No quote",
                 quoteSource: "No author"
             };
-			response.write("No quote");
-			response.end();
+            response.write("No quote");
+            response.end();
         }
         else {
             var quoteId = result.rows[Math.floor(Math.random() * result.total_rows)].id;
-            dbGet("/test/" + quoteId, function(quote){
+            dbGet("/justanotherquote/" + quoteId, function(quote){
                 fs.readFile('./templates/oneQuote.haml', "utf8", function(e, c){
                     quote = {
-                        quote: quote.quote,
-                        quoteSource: quote.quoteSource
+                        quote: quote.quote.replace(/\n/g, "<br>"),
+                        quoteSource: quote.quoteSource.replace(/\n/g, "<br>")
                     };
                     if (forJson) {
-						var json=JSON.stringify(quote);
-						var t=json.replace(/\\n/g,"<br>");
-                        response.write(t);
+                        var json = JSON.stringify(quote);
+                        response.write(json);
                     }
                     else {
                         var html = haml.render(c.toString(), {
@@ -84,28 +87,19 @@ function showOneQuote(response, forJson){
     });
 }
 
-function showOneQuoteAjax(response)
-{
-	showOneQuote(response,true);
+function showOneQuoteAjax(response){
+    showOneQuote(response, true);
 }
 
 function serverMain(request, response){
     console.log(request.url);
     if (request.url.search("/public") == 0) 
         getPublicContent(response, request.url);
-    else 
-	{
-	        response.writeHead(200, {
-            'Content-Type': 'text/html'
-        });
-		response.end("Q");
-		
-		/*
+    else {       
         if (request.url.search("/getRandomQuote") == 0) 
             showOneQuoteAjax(response);
         else 
             if (request.url == "/") 
                 showOneQuote(response);
-		*/
-	}
+    }
 }

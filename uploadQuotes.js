@@ -38,13 +38,18 @@ var quotes = [{
 
 var http = require('http');
 
-var client = http.createClient(5984, "127.0.0.1");
-quotes.forEach(function(item){
-    var request = client.request("POST", "/test", {
-        'Content-Type': 'application/json'
+var client = http.createClient(80, "grender.couchone.com");
+var base64authData ="Basic " + new Buffer("reman:gnmjHkjgmnSdffj56", 'binary').toString('base64');
+
+quotes.forEach(function(item){	
+    var request = client.request("POST", "/justanotherquote/", {
+        'Content-Type': 'application/json',
+		host:"grender.couchone.com",
+		authorization :base64authData
     });
     request.addListener('response', function(response){
         var responseBody = "";
+response.addListener('error', function(){console.log("e");});
         
         response.addListener("data", function(chunk){
             responseBody += chunk;

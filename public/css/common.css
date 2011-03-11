@@ -155,3 +155,8 @@ body {
    a.noBorder {
    	border-bottom: 0px; 
    }
+
+#ajaxLoader {
+	display: none;
+}   
+   

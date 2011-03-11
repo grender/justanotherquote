@@ -17,13 +17,15 @@ function centerQuote(){
 }
 
 function getNewQuote(){
-    $.getJSON("/getRandomQuote", function(json){    
-        $(".quote").fadeOut('fast', function(){
+	$("#ajaxLoader").toggle(true);
+    $(".quote").fadeOut('fast', function(){
+        $.getJSON("/getRandomQuote", function(json){
             $(".quoteText").html(json.quote);
+			$("#ajaxLoader").toggle(false);
             $(".quoteSource").html('&mdash;&nbsp;' + json.quoteSource);
             $(".quote").fadeIn('fast');
             centerQuote();
-        }); 
+        });
     });
 }
 
@@ -42,5 +44,27 @@ $(document).ready(function(){
     $("#nextQuoteLink").click(getNewQuote);
     $("#helpLink").click(showHelp);
     $(".helpDiv").click(hideHelp);
-    getNewQuote();
+	getNewQuote();
 });
+
+
+
+
+
+
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-21693376-1']);
+            _gaq.push(['_trackPageview']);
+            
+            (function(){
+                var ga = document.createElement('script');
+                ga.type = 'text/javascript';
+                ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(ga, s);
+            })();
+
+
+
+
