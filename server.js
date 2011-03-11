@@ -1,12 +1,9 @@
 var sys = require('sys');
 var fs = require('fs');
 var http = require('http');
-
-// Haml-js: http://github.com/creationix/haml-js
 var haml = require('haml');
 
 http.createServer(serverMain).listen(8807);
-//console.log('Server running at http://127.0.0.1:8000/');
 
 function getPublicContent(response, url){
     fs.readFile('.' + url, function(e, c){
@@ -21,7 +18,7 @@ function getPublicContent(response, url){
     });
 }
 
-function dbGet(path, next){   
+function dbGet(path, next){
     var client = http.createClient(80, "grender.couchone.com");
     var base64authData = "Basic " + new Buffer("reman:gnmjHkjgmnSdffj56", 'binary').toString('base64');
     
@@ -76,11 +73,11 @@ function showOneQuote(response, forJson){
                     }
                     else {
                         var html = haml.render(c.toString(), {
-                        //    locals: quote
-			locals :{
-                quote: "",
-                quoteSource: ""
-            }						
+                            //    locals: quote
+                            locals: {
+                                quote: "",
+                                quoteSource: ""
+                            }
                         });
                         response.write(html);
                     }
@@ -96,10 +93,9 @@ function showOneQuoteAjax(response){
 }
 
 function serverMain(request, response){
-    console.log(request.url);
     if (request.url.search("/public") == 0) 
         getPublicContent(response, request.url);
-    else {       
+    else {
         if (request.url.search("/getRandomQuote") == 0) 
             showOneQuoteAjax(response);
         else 
