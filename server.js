@@ -28,12 +28,12 @@ function dbGet(path, next){
     });
     
     //var dbReq = client.request("GET", path);
-    dbReq.addListener('response', function(dbResp){
+    dbReq.on('response', function(dbResp){
         var dbRespBody = "";
-        dbResp.addListener("data", function(chunk){
+        dbResp.on("data", function(chunk){
             dbRespBody += chunk;
         });
-        dbResp.addListener("end", function(){
+        dbResp.on("end", function(){
             next(JSON.parse(dbRespBody));
         });
     });
