@@ -93,14 +93,6 @@ function showOneQuoteAjax(response){
 }
 
 function serverMain(request, response){
-        response.writeHead(200, {
-            'Content-Type': 'text/html'
-        });
-		var t=new Buffer("Hello", 'binary').toString('base64');
-		console.log(t);
-		response.end(t);
-		return;
-
     if (request.url.search("/public") == 0) 
         getPublicContent(response, request.url);
     else {
