@@ -159,4 +159,8 @@ body {
 #ajaxLoader {
 	display: none;
 }   
+
+#helpLink {
+		display: none;
+}
    

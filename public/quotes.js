@@ -16,12 +16,18 @@ function centerQuote(){
     quote.css("margin-top", posY + "px");
 }
 
+function setDownloadState(isDownload)
+{
+	$("#nextQuoteLink").toggle(!isDownload);
+	$("#ajaxLoader").toggle(isDownload);	
+}
+
 function getNewQuote(){
-	$("#ajaxLoader").toggle(true);
+	setDownloadState(true);
     $(".quote").fadeOut('fast', function(){
         $.getJSON("/getRandomQuote", function(json){
             $(".quoteText").html(json.quote);
-			$("#ajaxLoader").toggle(false);
+			setDownloadState(false);
             $(".quoteSource").html('&mdash;&nbsp;' + json.quoteSource);
             $(".quote").fadeIn('fast');
             centerQuote();
