@@ -76,7 +76,11 @@ function showOneQuote(response, forJson){
                     }
                     else {
                         var html = haml.render(c.toString(), {
-                            locals: quote
+                        //    locals: quote
+			locals :{
+                quote: "",
+                quoteSource: ""
+            }						
                         });
                         response.write(html);
                     }
