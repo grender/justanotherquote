@@ -3,7 +3,17 @@ var fs = require('fs');
 var http = require('http');
 var haml = require('haml');
 
+var dbOption={
+	host: "grender.couchone.com",
+	port:80,
+	path:"/justanotherquote/",
+	user:"reman",
+	pass:"gnmjHkjgmnSdffj56"
+};
+
 http.createServer(serverMain).listen(8807);
+
+
 
 function getPublicContent(response, url){
     fs.readFile('.' + url, function(e, c){
@@ -19,15 +29,13 @@ function getPublicContent(response, url){
 }
 
 function dbGet(path, next){
-    var client = http.createClient(80, "grender.couchone.com");
-    var base64authData = "Basic " + new Buffer("reman:gnmjHkjgmnSdffj56", 'binary').toString('base64');
+    var client = http.createClient(dbOption.port, dbOption.host);
+    var base64authData = "Basic " + new Buffer(dbOption.user+":"+dbOption.pass, 'binary').toString('base64');
     
-    var dbReq = client.request("GET", path, {
-        host: "grender.couchone.com",
+    var dbReq = client.request("GET", dbOption.path+path, {
+        host: dbOption.host,
         authorization: base64authData
     });
-    
-    //var dbReq = client.request("GET", path);
     dbReq.on('response', function(dbResp){
         var dbRespBody = "";
         dbResp.on("data", function(chunk){
@@ -50,7 +58,7 @@ function showOneQuote(response, forJson){
             'Content-Type': 'text/html'
         });
     
-    dbGet("/justanotherquote/_all_docs", function(result){
+    dbGet("_all_docs", function(result){
         if (result == null || result.total_rows == 0) {
             var quote = {
                 quote: "No quote",
@@ -61,7 +69,7 @@ function showOneQuote(response, forJson){
         }
         else {
             var quoteId = result.rows[Math.floor(Math.random() * result.total_rows)].id;
-            dbGet("/justanotherquote/" + quoteId, function(quote){
+            dbGet(quoteId, function(quote){
                 fs.readFile('./templates/oneQuote.haml', "utf8", function(e, c){
                     quote = {
                         quote: quote.quote.replace(/\n/g, "<br>"),
