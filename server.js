@@ -1,9 +1,9 @@
 var http = require("http");  
     
      http.createServer(function(request, response) {  
-          response.sendHeader(200, {"Content-Type": "text/html"});  
+          response.writeHead(200, {"Content-Type": "text/html"});  
 	       response.write("Hello World!");  
-	            response.close();  
+	            response.end();  
 		     }).listen(80);  
 		     
 		      console.log("Server running..."); 
