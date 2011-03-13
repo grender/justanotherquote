@@ -3,14 +3,18 @@ var fs = require('fs');
 var http = require('http');
 var haml = require('haml');
 
-var dbOption={
-	host: "grender.couchone.com",
-	port:80,
-	path:"/justanotherquote/",
-	user:"reman",
-	pass:"gnmjHkjgmnSdffj56"
+var dbOption = {
+    host: "grender.couchone.com",
+    port: 80,
+    path: "/justanotherquote/",
+    user: "reman",
+    pass: "gnmjHkjgmnSdffj56"
 };
 
+
+var templates = {
+    quoteTemplate: haml.optimize(haml.compile(fs.readFileSync('./templates/oneQuote.haml', "utf8")))
+};
 http.createServer(serverMain).listen(8807);
 
 
@@ -30,9 +34,9 @@ function getPublicContent(response, url){
 
 function dbGet(path, next){
     var client = http.createClient(dbOption.port, dbOption.host);
-    var base64authData = "Basic " + new Buffer(dbOption.user+":"+dbOption.pass, 'binary').toString('base64');
+    var base64authData = "Basic " + new Buffer(dbOption.user + ":" + dbOption.pass, 'binary').toString('base64');
     
-    var dbReq = client.request("GET", dbOption.path+path, {
+    var dbReq = client.request("GET", dbOption.path + path, {
         host: dbOption.host,
         authorization: base64authData
     });
@@ -42,56 +46,61 @@ function dbGet(path, next){
             dbRespBody += chunk;
         });
         dbResp.on("end", function(){
-            next(JSON.parse(dbRespBody));
+            next(null, JSON.parse(dbRespBody));
+        });
+        dbResp.on("error", function(){
+            console.log("Error getting quote from DB");
+            next("Error getting quote from DB", null);
         });
     });
     dbReq.end();
 }
 
-function showOneQuote(response, forJson){
-    if (forJson) 
-        response.writeHead(200, {
-            'Content-Type': 'application/json'
-        });
-    else 
-        response.writeHead(200, {
-            'Content-Type': 'text/html'
-        });
+function showBodyPage(response){
+    response.writeHead(200, {
+        'Content-Type': 'text/html'
+    });
+    response.end(haml.execute(templates.quoteTemplate));
+}
+
+function showOneQuote(response){
+    response.writeHead(200, {
+        'Content-Type': 'application/json'
+    });
     
-    dbGet("_all_docs", function(result){
+    dbGet("_all_docs", function(error, result){
+        if (error) {
+            response.end(JSON.stringify({
+                error: "Error on getting from DB...",
+                errorInfo: error
+            }));
+            return;
+        }
+        
         if (result == null || result.total_rows == 0) {
             var quote = {
-                quote: "No quote",
+                quote: "No quote,",
                 quoteSource: "No author"
             };
-            response.write("No quote");
-            response.end();
+            response.end(JSON.stringify(quote));
         }
         else {
             var quoteId = result.rows[Math.floor(Math.random() * result.total_rows)].id;
-            dbGet(quoteId, function(quote){
-                fs.readFile('./templates/oneQuote.haml', "utf8", function(e, c){
-                    quote = {
-                        quote: quote.quote.replace(/\n/g, "<br>"),
-                        quoteSource: quote.quoteSource.replace(/\n/g, "<br>")
-                    };
-                    if (forJson) {
-                        var json = JSON.stringify(quote);
-                        response.write(json);
-                    }
-                    else {
-                        var html = haml.render(c.toString(), {
-                            //    locals: quote
-                            locals: {
-                                quote: "",
-                                quoteSource: ""
-                            }
-                        });
-                        response.write(html);
-                    }
-                    response.end();
-                });
-            })
+            dbGet(quoteId, function(error, quote){
+                if (error) {
+                    response.end(JSON.stringify({
+                        error: "Error on getting from DB...",
+                        errorInfo: error
+                    }));
+                    return;
+                }
+                
+                quote = {
+                    quote: quote.quote.replace(/\n/g, "<br>"),
+                    quoteSource: quote.quoteSource.replace(/\n/g, "<br>")
+                };
+                response.end(JSON.stringify(quote));
+            });
         }
     });
 }
@@ -108,6 +117,12 @@ function serverMain(request, response){
             showOneQuoteAjax(response);
         else 
             if (request.url == "/") 
-                showOneQuote(response);
+                showBodyPage(response);
+            else {
+                response.writeHead(404);
+                response.end();
+                
+            }
+        
     }
 }
