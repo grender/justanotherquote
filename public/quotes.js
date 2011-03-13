@@ -16,19 +16,28 @@ function centerQuote(){
     quote.css("margin-top", posY + "px");
 }
 
-function setDownloadState(isDownload)
-{
-	$("#nextQuoteLink").toggle(!isDownload);
-	$("#ajaxLoader").toggle(isDownload);	
+function setDownloadState(isDownload){
+    $("#nextQuoteLink").toggle(!isDownload);
+    $("#ajaxLoader").toggle(isDownload);
 }
 
 function getNewQuote(){
-	setDownloadState(true);
+    setDownloadState(true);
     $(".quote").fadeOut('fast', function(){
         $.getJSON("/getRandomQuote", function(json){
+            if (json.error) {
+                alert(json.error + "\n" + json.errorInfo);
+                json = {
+                    quote: "",
+                    quoteSource: ""
+                };
+            }
             $(".quoteText").html(json.quote);
-			setDownloadState(false);
-            $(".quoteSource").html('&mdash;&nbsp;' + json.quoteSource);
+            setDownloadState(false);
+            if (json.quoteSource == "") 
+                $(".quoteSource").html(json.quoteSource);
+            else 
+                $(".quoteSource").html('&mdash;&nbsp;' + json.quoteSource);
             $(".quote").fadeIn('fast');
             centerQuote();
         });
@@ -50,7 +59,7 @@ $(document).ready(function(){
     $("#nextQuoteLink").click(getNewQuote);
     $("#helpLink").click(showHelp);
     $(".helpDiv").click(hideHelp);
-	getNewQuote();
+    getNewQuote();
 });
 
 
@@ -58,18 +67,18 @@ $(document).ready(function(){
 
 
 
-            var _gaq = _gaq || [];
-            _gaq.push(['_setAccount', 'UA-21693376-1']);
-            _gaq.push(['_trackPageview']);
-            
-            (function(){
-                var ga = document.createElement('script');
-                ga.type = 'text/javascript';
-                ga.async = true;
-                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-                var s = document.getElementsByTagName('script')[0];
-                s.parentNode.insertBefore(ga, s);
-            })();
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-21693376-1']);
+_gaq.push(['_trackPageview']);
+
+(function(){
+    var ga = document.createElement('script');
+    ga.type = 'text/javascript';
+    ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(ga, s);
+})();
 
 
 

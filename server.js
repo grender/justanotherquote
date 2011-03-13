@@ -88,13 +88,13 @@ function showOneQuote(response){
             var quoteId = result.rows[Math.floor(Math.random() * result.total_rows)].id;
             dbGet(quoteId, function(error, quote){
                 if (error) {
+					console.log("Error on getting from DB("+error+")");
                     response.end(JSON.stringify({
                         error: "Error on getting from DB...",
                         errorInfo: error
                     }));
                     return;
-                }
-                
+                }             
                 quote = {
                     quote: quote.quote.replace(/\n/g, "<br>"),
                     quoteSource: quote.quoteSource.replace(/\n/g, "<br>")
