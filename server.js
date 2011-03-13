@@ -2,6 +2,8 @@ var sys = require('sys');
 var fs = require('fs');
 var http = require('http');
 var haml = require('haml');
+var connect = require('connect');
+var auth = require('connect-auth');
 
 var dbOption = {
     host: "grender.couchone.com",
@@ -15,14 +17,50 @@ var dbOption = {
 var templates = {
     quoteTemplate: haml.optimize(haml.compile(fs.readFileSync('./templates/oneQuote.haml', "utf8")))
 };
-http.createServer(serverMain).listen(8807);
 
 
 
-function getPublicContent(response, url){
-    fs.readFile('.' + url, function(e, c){
+function routes(app){
+    app.get('/public/*', getPublicContent);
+    app.get('/api/getRandomQuote', showOneQuote);
+    app.get('/add', showAddQuote);
+    app.get('/', showBodyPage);
+}
+
+function strategy(options){
+    options = options || {};
+    var that = {};
+    var my = {};
+    that.name = options.name || "someName";
+    that.authenticate = function(request, response, callback){
+        this.success({
+            id: '1',
+            name: 'someUser'
+        }, callback);
+    }
+    return that;
+};
+
+var server = connect.createServer(connect.cookieParser(), connect.session({
+    secret: "secret"
+}), connect.bodyParser(), auth(require("./securityStrategy.js")()), connect.router(routes));
+server.listen(8807);
+
+
+function showAddQuote(request, response, params){
+    request.authenticate(['someName'], function(error, authenticated){
+        response.writeHead(200, {
+            'Content-Type': 'text/plain'
+        });
+        response.end('Hello World');
+    });
+}
+
+function getPublicContent(request, response, params){
+    fs.readFile('.' + request.url, function(e, c){
         if (e) {
             response.writeHead(404);
+            console.log("Error accesing(" + '.' + request.url + ")");
         }
         else {
             response.writeHead(200);
@@ -56,14 +94,14 @@ function dbGet(path, next){
     dbReq.end();
 }
 
-function showBodyPage(response){
+function showBodyPage(request, response){
     response.writeHead(200, {
         'Content-Type': 'text/html'
     });
     response.end(haml.execute(templates.quoteTemplate));
 }
 
-function showOneQuote(response){
+function showOneQuote(request, response){
     response.writeHead(200, {
         'Content-Type': 'application/json'
     });
@@ -88,13 +126,13 @@ function showOneQuote(response){
             var quoteId = result.rows[Math.floor(Math.random() * result.total_rows)].id;
             dbGet(quoteId, function(error, quote){
                 if (error) {
-					console.log("Error on getting from DB("+error+")");
+                    console.log("Error on getting from DB(" + error + ")");
                     response.end(JSON.stringify({
                         error: "Error on getting from DB...",
                         errorInfo: error
                     }));
                     return;
-                }             
+                }
                 quote = {
                     quote: quote.quote.replace(/\n/g, "<br>"),
                     quoteSource: quote.quoteSource.replace(/\n/g, "<br>")
@@ -103,26 +141,4 @@ function showOneQuote(response){
             });
         }
     });
-}
-
-function showOneQuoteAjax(response){
-    showOneQuote(response, true);
-}
-
-function serverMain(request, response){
-    if (request.url.search("/public") == 0) 
-        getPublicContent(response, request.url);
-    else {
-        if (request.url.search("/getRandomQuote") == 0) 
-            showOneQuoteAjax(response);
-        else 
-            if (request.url == "/") 
-                showBodyPage(response);
-            else {
-                response.writeHead(404);
-                response.end();
-                
-            }
-        
-    }
 }

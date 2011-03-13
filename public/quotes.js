@@ -24,7 +24,7 @@ function setDownloadState(isDownload){
 function getNewQuote(){
     setDownloadState(true);
     $(".quote").fadeOut('fast', function(){
-        $.getJSON("/getRandomQuote", function(json){
+        $.getJSON("/api/getRandomQuote", function(json){
             if (json.error) {
                 alert(json.error + "\n" + json.errorInfo);
                 json = {
