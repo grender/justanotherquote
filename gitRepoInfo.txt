@@ -1,4 +1,0 @@
-appname=justanotherquote&start=server.js
-
-{"status":"success","port":8807,"gitrepo":"ec2-user@nodester.com:/home/ec2-user/hosted_apps/grender/654-5f09b96f856f898cb2f609c0918afb01.git","start":"server.js
-","running":false,"pid":"unknown"}
