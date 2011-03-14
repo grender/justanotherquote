@@ -14,6 +14,7 @@
     %link(rel="stylesheet" href="./public/css/common.css" type="text/css" media="all")
    	%script(type="text/javascript" src="./public/jquery-1.5.min.js")
    	%script(type="text/javascript" src="./public/jquery.jplayer.min.js")
+   	%script(type="text/javascript" src="./public/common.js")    
    	%script(type="text/javascript" src="./public/quotes.js")      
       
   %body.gradient
@@ -27,18 +28,20 @@
             #jPlayer
             .jp-audio
               .jp-type-single
-                #jp_interface_1.jp-interface
-                  %ul.jp-controls
-                    %li
-                      %a.jp-play &play.start;
-                    %li
-                      %a.jp-pause &play.pause;                                        
-                  .jp-current-time 
+                .jp-interface#jp_interface_1
+                  .jp-play
+                    %img(src="./public/images/control_play.png")
+                  .jp-pause
+                    %img(src="./public/images/control_pause.png")
+                  .jp-progress
+                    .jp-seek-bar
+                      .jp-play-bar
+                        .jp-current-time
                   .jp-duration                                                                                              
     .footer
-      %a#nextQuoteLink(href="#")
+      %a.whenDownloadHide#nextQuoteLink(href="#")
         ...
       %a#helpLink(href="#")
         ?
-      %img#ajaxLoader(src="./public/images/ajaxLoader.gif")
+      %img.whenDownloadShow#ajaxLoader(src="./public/images/ajaxLoader.gif")
     .helpDiv

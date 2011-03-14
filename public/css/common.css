@@ -48,6 +48,9 @@ body {
 
 
 
+
+
+
 	filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr=#FFe8e8e7, endColorstr=#FFf7f8f7);
 	}
 	@media all and (min-width: 0px) {
@@ -156,12 +159,46 @@ body {
    	border-bottom: 0px; 
    }
 
-#ajaxLoader {
+.jp-audio,#ajaxLoader,#helpLink {
 	display: none;
 }   
 
-#helpLink {
-		display: none;
+ul.jp-controls li { display: inline; }
+
+.jp-progress
+{
+	width: 20em;	
 }
 
-ul.jp-controls li { display: inline; }
+.jp-seek-bar
+{
+	background: #BBBBBB;
+	height: 1em;
+}
+
+.jp-play-bar
+{
+	background: #777777;
+	height: 100%;
+}
+
+.jp-current-time
+{
+	color: white;
+	text-align:right;
+}
+
+.jp-duration
+{
+
+}   
+
+.jp-play,
+.jp-pause,
+.jp-progress,
+.jp-duration {
+	float:left;
+}
+
+#jp_interface_1 {
+}

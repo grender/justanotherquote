@@ -15,10 +15,9 @@ var dbOption = {
 
 
 var templates = {
-    quoteTemplate: haml.optimize(haml.compile(fs.readFileSync('./templates/oneQuote.haml', "utf8")))
+    oneQuote: haml.optimize(haml.compile(fs.readFileSync('./templates/oneQuote.haml', "utf8"))),
+    addQuote: haml.optimize(haml.compile(fs.readFileSync('./templates/addQuote.haml', "utf8")))
 };
-
-
 
 function routes(app){
     app.get('/public/*', getPublicContent);
@@ -49,10 +48,10 @@ server.listen(8807);
 
 function showAddQuote(request, response, params){
     //request.authenticate(['someName'], function(error, authenticated){
-        response.writeHead(200, {
-            'Content-Type': 'text/plain'
-        });
-        response.end('Hello World');
+    response.writeHead(200, {
+        'Content-Type': 'text/html'
+    });
+    response.end(haml.execute(templates.addQuote));
     //});
 }
 
@@ -98,7 +97,7 @@ function showBodyPage(request, response){
     response.writeHead(200, {
         'Content-Type': 'text/html'
     });
-    response.end(haml.execute(templates.quoteTemplate));
+    response.end(haml.execute(templates.oneQuote));
 }
 
 function showOneQuote(request, response){
@@ -133,8 +132,8 @@ function showOneQuote(request, response){
                     }));
                     return;
                 }
-				quote.quote=quote.quote.replace(/\n/g, "<br>");
-				quote.quoteSource=quote.quoteSource.replace(/\n/g, "<br>");
+                quote.quote = quote.quote.replace(/\n/g, "<br>");
+                quote.quoteSource = quote.quoteSource.replace(/\n/g, "<br>");
                 response.end(JSON.stringify(quote));
             });
         }
