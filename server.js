@@ -3,7 +3,7 @@ var fs = require('fs');
 var http = require('http');
 var haml = require('haml');
 var connect = require('connect');
-var auth = require('connect-auth');
+//var auth = require('connect-auth');
 
 var dbOption = {
     host: "grender.couchone.com",
@@ -26,23 +26,12 @@ function routes(app){
     app.get('/', showBodyPage);
 }
 
-function strategy(options){
-    options = options || {};
-    var that = {};
-    var my = {};
-    that.name = options.name || "someName";
-    that.authenticate = function(request, response, callback){
-        this.success({
-            id: '1',
-            name: 'someUser'
-        }, callback);
-    }
-    return that;
-};
-
-var server = connect.createServer(connect.cookieParser(), connect.session({
-    secret: "secret"
-}), connect.bodyParser(), auth(require("./securityStrategy.js")()), connect.router(routes));
+var server = connect.createServer(
+connect.cookieParser(),
+connect.session({secret: "secret"}),
+connect.bodyParser(),
+ //auth(require("./securityStrategy.js")()),
+  connect.router(routes));
 server.listen(8807);
 
 
