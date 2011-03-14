@@ -163,4 +163,5 @@ body {
 #helpLink {
 		display: none;
 }
-   
+
+ul.jp-controls li { display: inline; }

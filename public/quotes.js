@@ -1,7 +1,6 @@
 var currentQuote = -1;
 
 function centerQuote(){
-
     var quote = $(".quote");
     var quoteText = $(".quoteText");
     var quoteSource = $(".quoteSource");
@@ -21,6 +20,19 @@ function setDownloadState(isDownload){
     $("#ajaxLoader").toggle(isDownload);
 }
 
+function setQuoteOnPage(quote){
+    $(".quoteText").html(quote.quote);
+    if (quote.quoteSource == "") 
+        $(".quoteSource").html("");
+    else 
+        $(".quoteSource").html('&mdash;&nbsp;' + quote.quoteSource);
+    if (quote.mp3link) {
+        $("#jPlayer").jPlayer("setMedia", {
+            mp3: quote.mp3link
+        });
+    }
+}
+
 function getNewQuote(){
     setDownloadState(true);
     $(".quote").fadeOut('fast', function(){
@@ -32,12 +44,8 @@ function getNewQuote(){
                     quoteSource: ""
                 };
             }
-            $(".quoteText").html(json.quote);
+            setQuoteOnPage(json);
             setDownloadState(false);
-            if (json.quoteSource == "") 
-                $(".quoteSource").html(json.quoteSource);
-            else 
-                $(".quoteSource").html('&mdash;&nbsp;' + json.quoteSource);
             $(".quote").fadeIn('fast');
             centerQuote();
         });
@@ -60,6 +68,9 @@ $(document).ready(function(){
     $("#helpLink").click(showHelp);
     $(".helpDiv").click(hideHelp);
     getNewQuote();
+    $("#jPlayer").jPlayer({
+        swfPath: "./public"
+    });
 });
 
 

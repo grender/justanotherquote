@@ -48,12 +48,12 @@ server.listen(8807);
 
 
 function showAddQuote(request, response, params){
-    request.authenticate(['someName'], function(error, authenticated){
+    //request.authenticate(['someName'], function(error, authenticated){
         response.writeHead(200, {
             'Content-Type': 'text/plain'
         });
         response.end('Hello World');
-    });
+    //});
 }
 
 function getPublicContent(request, response, params){
@@ -133,10 +133,8 @@ function showOneQuote(request, response){
                     }));
                     return;
                 }
-                quote = {
-                    quote: quote.quote.replace(/\n/g, "<br>"),
-                    quoteSource: quote.quoteSource.replace(/\n/g, "<br>")
-                };
+				quote.quote=quote.quote.replace(/\n/g, "<br>");
+				quote.quoteSource=quote.quoteSource.replace(/\n/g, "<br>");
                 response.end(JSON.stringify(quote));
             });
         }
