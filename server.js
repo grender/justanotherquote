@@ -32,7 +32,8 @@ connect.session({secret: "secret"}),
 connect.bodyParser(),
  //auth(require("./securityStrategy.js")()),
   connect.router(routes));
-server.listen(8807);
+//server.listen(8807);
+server.listen(80);
 
 
 function showAddQuote(request, response, params){
