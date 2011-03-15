@@ -68,7 +68,7 @@ $(document).ready(function(){
     $(".helpDiv").click(hideHelp);
     getNewQuote();
     $("#jPlayer").jPlayer({
-        swfPath: "./public"
+        swfPath: "./"
     });
 });
 

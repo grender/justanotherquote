@@ -13,6 +13,8 @@ var dbOption = {
     pass: "gnmjHkjgmnSdffj56"
 };
 
+//server.listen(8807);
+var serverOption={port: 8807};
 
 var templates = {
     oneQuote: haml.optimize(haml.compile(fs.readFileSync('./templates/oneQuote.haml', "utf8"))),
@@ -20,42 +22,33 @@ var templates = {
 };
 
 function routes(app){
-    app.get('/public/*', getPublicContent);
     app.get('/api/getRandomQuote', showOneQuote);
     app.get('/add', showAddQuote);
     app.get('/', showBodyPage);
 }
 
-var server = connect.createServer(
-connect.cookieParser(),
-connect.session({secret: "secret"}),
-connect.bodyParser(),
- //auth(require("./securityStrategy.js")()),
-  connect.router(routes));
-//server.listen(8807);
-server.listen(80);
+var server = connect.createServer()
+  .use(connect.logger())
+  .use(connect.favicon(__dirname + '/public/favicon.ico'))
+  .use(connect.cookieParser())
+  .use(connect.session({secret: "secret"}))
+  .use(connect.bodyParser())
+  //.use(auth(require("./securityStrategy.js")()))
+  .use(connect.router(routes))
+  .use(connect.static(__dirname+"/public"));  
+server.listen(serverOption.port);
 
+function checkUserPass(user, pass){
+    return 'add' == user & 'may' == pass;
+  };
 
 function showAddQuote(request, response, params){
-    //request.authenticate(['someName'], function(error, authenticated){
-    response.writeHead(200, {
-        'Content-Type': 'text/html'
-    });
-    response.end(haml.execute(templates.addQuote));
-    //});
-}
-
-function getPublicContent(request, response, params){
-    fs.readFile('.' + request.url, function(e, c){
-        if (e) {
-            response.writeHead(404);
-            console.log("Error accesing(" + '.' + request.url + ")");
-        }
-        else {
-            response.writeHead(200);
-            response.write(c);
-        }
-        response.end();
+//request.authenticate(['someName'], function(error, authenticated){	
+    connect.basicAuth(checkUserPass)(request, response, function(){
+        response.writeHead(200, {
+            'Content-Type': 'text/html'
+        });
+        response.end(haml.execute(templates.addQuote));
     });
 }
 
@@ -113,6 +106,9 @@ function showOneQuote(request, response){
         }
         else {
             var quoteId = result.rows[Math.floor(Math.random() * result.total_rows)].id;
+			// TODO: Do dbGet -sync to make that 
+			//if(request.params.id)
+			//	quoteId=request.params.id;
             dbGet(quoteId, function(error, quote){
                 if (error) {
                     console.log("Error on getting from DB(" + error + ")");
