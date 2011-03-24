@@ -68,7 +68,9 @@ $(document).ready(function(){
     $(".helpDiv").click(hideHelp);
     getNewQuote();
     $("#jPlayer").jPlayer({
-        swfPath: "./"
+        swfPath: "",
+		solution: "html, flash",
+		supplied: "mp3" 		
     });
 });
 

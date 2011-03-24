@@ -22,31 +22,7 @@ else {
         }
     };
     var currentRouter = connect.router(configRoutes);
-}/* {
-
- db: {
-
- host: "grender.couchone.com",
-
- port: 80,
-
- path: "/justanotherquote/",
-
- user: "reman",
-
- pass: "gnmjHkjgmnSdffj56"
-
- },
-
- server: {
-
- port: 8807
-
- }
-
- }*/
-
-;
+}
 
 var templates = {
     oneQuote: haml.optimize(haml.compile(fs.readFileSync('./templates/oneQuote.haml', "utf8"))),
