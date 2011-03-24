@@ -1,0 +1,47 @@
+
+!!! 5
+%html
+  %head
+    %title Just another quote
+    %meta(charset="UTF-8")
+    %meta(name="description" content="")
+    %meta(name="author" content="")
+    %meta(http-equiv="X-UA-Compatible" content="IE=edge,chrome=1")
+    %meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    %link(rel="shortcut icon" href="./images/favicon.ico")
+    %link(rel="apple-touch-icon" href="./images/apple-touch-icon.png")
+    %link(rel="stylesheet" href="./css/reset.css" type="text/css" media="all")
+    %link(rel="stylesheet" href="./css/common.css" type="text/css" media="all")
+   	%script(type="text/javascript" src="./jquery-1.5.min.js")
+   	%script(type="text/javascript" src="./common.js")
+   	%script(type="text/javascript" src="./config.js")    
+            
+  %body.gradient
+    .wrapper
+      .container
+        .formDiv
+          %form
+            .formLine
+              .formLineLabel Порт сервера
+              .formLineControl %input(type="text" id="serverPort")            
+                     
+            .formLine
+              .formLineLabel Хост
+              .formLineControl %input(type="text" id="dbHost")
+            .formLine
+              .formLineLabel Порт
+              .formLineControl %input(type="text" id="dbPort")
+            .formLine
+              .formLineLabel Путь
+              .formLineControl %input(type="text" id="dbPath")
+            .formLine
+              .formLineLabel Пользователь
+              .formLineControl %input(type="text" id="dbUser")
+            .formLine
+              .formLineLabel Пароль
+              .formLineControl %input(type="password" id="dbPass")
+            %a#saveLink.whenDownloadHide(href="#") Сохранить
+            %img#ajaxLoader.whenDownloadShow(src="./images/ajaxLoader.gif")
+            .saveStatus                                                                                  
+    .footer
+    .helpDiv

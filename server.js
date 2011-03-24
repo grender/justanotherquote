@@ -1,25 +1,63 @@
 var sys = require('sys');
 var fs = require('fs');
+var path = require('path');
 var http = require('http');
 var haml = require('haml');
 var connect = require('connect');
 //var auth = require('connect-auth');
 
-var dbOption = {
-    host: "grender.couchone.com",
-    port: 80,
-    path: "/justanotherquote/",
-    user: "reman",
-    pass: "gnmjHkjgmnSdffj56"
-};
+var errorHelper = require('./utils/errorHelper.js');
 
-//server.listen(8807);
-var serverOption={port: 8807};
+var configPlace = './config.json';
+var DEFAULT_CONFIG_PORT=65000;
+
+if (path.existsSync(configPlace)) {
+    var options = JSON.parse(fs.readFileSync(configPlace));
+    var currentRouter = connect.router(routes);
+}
+else {
+    var options = {
+        server: {
+            port: DEFAULT_CONFIG_PORT
+        }
+    };
+    var currentRouter = connect.router(configRoutes);
+}/* {
+
+ db: {
+
+ host: "grender.couchone.com",
+
+ port: 80,
+
+ path: "/justanotherquote/",
+
+ user: "reman",
+
+ pass: "gnmjHkjgmnSdffj56"
+
+ },
+
+ server: {
+
+ port: 8807
+
+ }
+
+ }*/
+
+;
 
 var templates = {
     oneQuote: haml.optimize(haml.compile(fs.readFileSync('./templates/oneQuote.haml', "utf8"))),
-    addQuote: haml.optimize(haml.compile(fs.readFileSync('./templates/addQuote.haml', "utf8")))
+    addQuote: haml.optimize(haml.compile(fs.readFileSync('./templates/addQuote.haml', "utf8"))),
+    config: haml.optimize(haml.compile(fs.readFileSync('./templates/config.haml', "utf8")))
 };
+
+function configRoutes(app){
+    app.post('/api/saveConfig', saveConfig);
+    app.get('/', showConfig);
+}
 
 function routes(app){
     app.get('/api/getRandomQuote', showOneQuote);
@@ -28,22 +66,63 @@ function routes(app){
 }
 
 var server = connect.createServer()
-  .use(connect.logger())
-  .use(connect.favicon(__dirname + '/public/favicon.ico'))
-  .use(connect.cookieParser())
-  .use(connect.session({secret: "secret"}))
-  .use(connect.bodyParser())
-  //.use(auth(require("./securityStrategy.js")()))
-  .use(connect.router(routes))
-  .use(connect.static(__dirname+"/public"));  
-server.listen(serverOption.port);
+	.use(connect.logger())
+	.use(connect.favicon(__dirname + '/public/favicon.ico'))
+	.use(connect.cookieParser())
+	.use(connect.session({
+    secret: "secret"
+	}))
+	.use(connect.bodyParser())
+	//.use(auth(require("./securityStrategy.js")()))
+	.use(currentRouter)
+	.use(connect.static(__dirname + "/public"));
+server.listen(options.server.port);
+console.log("Server started on port "+options.server.port);
 
 function checkUserPass(user, pass){
     return 'add' == user & 'may' == pass;
-  };
+};
+
+function saveConfig(request, response, params){
+    var clientOptions = request.body;
+    response.writeHead(200, {
+        'Content-Type': 'application/json'
+    });
+    
+    var options = {
+        db: {
+            host: clientOptions.dbHost,
+            port: clientOptions.dbPort,
+            path: clientOptions.dbPath,
+            user: clientOptions.dbUser,
+            pass: clientOptions.dbPass
+        },
+        server: {
+            port: clientOptions.serverPort
+        }
+    };
+    
+    try {
+        fs.writeFileSync("config.json", JSON.stringify(options));
+        response.end(errorHelper.okStr);
+    } 
+    catch (error) {
+        response.end(errorHelper.errorStr(error));
+    }
+}
+
+function showConfig(request, response, params){
+    //request.authenticate(['someName'], function(error, authenticated){	
+    //    connect.basicAuth(checkUserPass)(request, response, function(){
+    response.writeHead(200, {
+        'Content-Type': 'text/html'
+    });
+    response.end(haml.execute(templates.config));
+    //    });
+}
 
 function showAddQuote(request, response, params){
-//request.authenticate(['someName'], function(error, authenticated){	
+    //request.authenticate(['someName'], function(error, authenticated){	
     connect.basicAuth(checkUserPass)(request, response, function(){
         response.writeHead(200, {
             'Content-Type': 'text/html'
@@ -53,11 +132,11 @@ function showAddQuote(request, response, params){
 }
 
 function dbGet(path, next){
-    var client = http.createClient(dbOption.port, dbOption.host);
-    var base64authData = "Basic " + new Buffer(dbOption.user + ":" + dbOption.pass, 'binary').toString('base64');
+    var client = http.createClient(options.db.port, options.db.host);
+    var base64authData = "Basic " + new Buffer(options.db.user + ":" + options.db.pass, 'binary').toString('base64');
     
-    var dbReq = client.request("GET", dbOption.path + path, {
-        host: dbOption.host,
+    var dbReq = client.request("GET", options.db.path + path, {
+        host: options.db.host,
         authorization: base64authData
     });
     dbReq.on('response', function(dbResp){
@@ -90,10 +169,7 @@ function showOneQuote(request, response){
     
     dbGet("_all_docs", function(error, result){
         if (error) {
-            response.end(JSON.stringify({
-                error: "Error on getting from DB...",
-                errorInfo: error
-            }));
+            response.end(errorHelper.errorStr(error));
             return;
         }
         
@@ -106,16 +182,13 @@ function showOneQuote(request, response){
         }
         else {
             var quoteId = result.rows[Math.floor(Math.random() * result.total_rows)].id;
-			// TODO: Do dbGet -sync to make that 
-			//if(request.params.id)
-			//	quoteId=request.params.id;
+            // TODO: Do dbGet -sync to make that 
+            //if(request.params.id)
+            //	quoteId=request.params.id;
             dbGet(quoteId, function(error, quote){
                 if (error) {
                     console.log("Error on getting from DB(" + error + ")");
-                    response.end(JSON.stringify({
-                        error: "Error on getting from DB...",
-                        errorInfo: error
-                    }));
+                    response.end(errorHelper.errorStr(error));
                     return;
                 }
                 quote.quote = quote.quote.replace(/\n/g, "<br>");

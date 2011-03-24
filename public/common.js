@@ -3,7 +3,9 @@ function setDownloadState(isDownload){
 	$(".whenDownloadShow").toggle(isDownload);
 }
 
-
+function showError(message){
+	alert(message);
+}
 
 
 
