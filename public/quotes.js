@@ -75,6 +75,8 @@ $(document).ready(function(){
 
 	$(".jp-audio").mouseenter(showPlayerProgress);
 	$(".jp-audio").mouseleave(hidePlayerProgress);
+	
+	//$(".footerButtonsBarRight").width();
 });
 
 function showPlayerProgress()

@@ -10,6 +10,7 @@ ul.jp-controls li { display: inline; }
 
 .fullControl {
 	width: 20em;
+	margin-left:-20em;
     background: white;
     border: 1px solid gray;
     padding: 4px;
@@ -49,7 +50,7 @@ ul.jp-controls li { display: inline; }
 .jp-audio,
 .jp-playFull,
 .jp-pauseFull {
-/*	float:left; */
+	float:left;
 }
 
 .jp-current-time {
