@@ -7,31 +7,48 @@ var connect = require('connect');
 //var auth = require('connect-auth');
 
 var errorHelper = require('./utils/errorHelper.js');
+var templates;
+var currentRouter;
+var server;
 
 var configPlace = './config.json';
 var DEFAULT_CONFIG_PORT = 65000;
-var configMode = false;
-if (!path.existsSync(configPlace)) 
-    configMode = true;
+var options;
 
-if (configMode) {
-    var options = {
-        server: {
-            port: DEFAULT_CONFIG_PORT
-        }
-    };
-    var currentRouter = connect.router(configRoutes);
-    var templates = {
-        config: haml.optimize(haml.compile(fs.readFileSync('./templates/config.haml', "utf8")))
-    };
-}
-else {
-    var options = JSON.parse(fs.readFileSync(configPlace));
-    var currentRouter = connect.router(routes);
-    var templates = {
-        oneQuote: haml.optimize(haml.compile(fs.readFileSync('./templates/oneQuote.haml', "utf8"))),
-        addQuote: haml.optimize(haml.compile(fs.readFileSync('./templates/addQuote.haml', "utf8"))),
-    };
+init();
+
+function init(){
+    var configMode = false;
+    if (!path.existsSync(configPlace)) 
+        configMode = true;
+    
+    if (configMode) {
+        options = {
+            server: {
+                port: DEFAULT_CONFIG_PORT
+            }
+        };
+        currentRouter = connect.router(configRoutes);
+        templates = {
+            config: haml.optimize(haml.compile(fs.readFileSync('./templates/config.haml', "utf8")))
+        };
+    }
+    else {
+        options = JSON.parse(fs.readFileSync(configPlace));
+        currentRouter = connect.router(routes);
+        templates = {
+            oneQuote: haml.optimize(haml.compile(fs.readFileSync('./templates/oneQuote.haml', "utf8"))),
+            addQuote: haml.optimize(haml.compile(fs.readFileSync('./templates/addQuote.haml', "utf8"))),
+        };
+    }
+    
+    server = connect.createServer().use(connect.logger()).use(connect.favicon(__dirname + '/public/favicon.ico')).use(connect.cookieParser()).use(connect.session({
+        secret: "secret"
+    })).use(connect.bodyParser())    //.use(auth(require("./securityStrategy.js")()))
+    .use(currentRouter)    //					.use(connect.static(__dirname + "/plainHtml"))
+    .use(connect.static(__dirname + "/public"));
+    server.listen(options.server.port);
+    console.log("Server started on port " + options.server.port);
 }
 
 function configRoutes(app){
@@ -44,24 +61,6 @@ function routes(app){
     app.get('/add', showAddQuote);
     app.get('/', showBodyPage);
 }
-
-var server = connect.createServer()
-					.use(connect.logger())
-					.use(connect.favicon(__dirname + '/public/favicon.ico'))
-					.use(connect.cookieParser())
-					.use(connect.session({
-    					secret: "secret"
-						}))
-					.use(connect.bodyParser())
-					//.use(auth(require("./securityStrategy.js")()))
-					.use(currentRouter)
-//					.use(connect.static(__dirname + "/plainHtml"))
-					.use(connect.static(__dirname + "/public"));
-server.listen(options.server.port);
-console.log("Server started on port " + options.server.port);
-
-
-
 
 function checkUserPass(user, pass){
     return 'add' == user & 'may' == pass;
@@ -95,8 +94,10 @@ function saveConfig(request, response, params){
         response.end(errorHelper.okStr);
     } 
     catch (error) {
-        response.end(errorHelper.errorStr(error));
+        response.end(errorHelper.errorStr(error.message));
     }
+	server.close();
+	init();
 }
 
 function showConfig(request, response, params){
