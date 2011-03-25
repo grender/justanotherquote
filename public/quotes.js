@@ -25,7 +25,7 @@ function setQuoteOnPage(quote){
 		$(".jp-audio").toggle(true);
         $("#jPlayer").jPlayer("setMedia", {
             mp3: quote.mp3link
-        });
+        }).jPlayer("play");
     }else {
 		$(".jp-audio").toggle(false);
 	}
@@ -68,8 +68,8 @@ $(document).ready(function(){
     $(".helpDiv").click(hideHelp);
     getNewQuote();
     $("#jPlayer").jPlayer({
-        swfPath: "",
-		solution: "html, flash",
+        swfPath: "./",
+		solution: "flash,html",
 		supplied: "mp3" 		
     });
 });

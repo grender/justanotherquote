@@ -9,26 +9,30 @@ var connect = require('connect');
 var errorHelper = require('./utils/errorHelper.js');
 
 var configPlace = './config.json';
-var DEFAULT_CONFIG_PORT=65000;
+var DEFAULT_CONFIG_PORT = 65000;
+var configMode = false;
+if (!path.existsSync(configPlace)) 
+    configMode = true;
 
-if (path.existsSync(configPlace)) {
-    var options = JSON.parse(fs.readFileSync(configPlace));
-    var currentRouter = connect.router(routes);
-}
-else {
+if (configMode) {
     var options = {
         server: {
             port: DEFAULT_CONFIG_PORT
         }
     };
     var currentRouter = connect.router(configRoutes);
+    var templates = {
+        config: haml.optimize(haml.compile(fs.readFileSync('./templates/config.haml', "utf8")))
+    };
 }
-
-var templates = {
-    oneQuote: haml.optimize(haml.compile(fs.readFileSync('./templates/oneQuote.haml', "utf8"))),
-    addQuote: haml.optimize(haml.compile(fs.readFileSync('./templates/addQuote.haml', "utf8"))),
-    config: haml.optimize(haml.compile(fs.readFileSync('./templates/config.haml', "utf8")))
-};
+else {
+    var options = JSON.parse(fs.readFileSync(configPlace));
+    var currentRouter = connect.router(routes);
+    var templates = {
+        oneQuote: haml.optimize(haml.compile(fs.readFileSync('./templates/oneQuote.haml', "utf8"))),
+        addQuote: haml.optimize(haml.compile(fs.readFileSync('./templates/addQuote.haml', "utf8"))),
+    };
+}
 
 function configRoutes(app){
     app.post('/api/saveConfig', saveConfig);
@@ -42,18 +46,22 @@ function routes(app){
 }
 
 var server = connect.createServer()
-	.use(connect.logger())
-	.use(connect.favicon(__dirname + '/public/favicon.ico'))
-	.use(connect.cookieParser())
-	.use(connect.session({
-    secret: "secret"
-	}))
-	.use(connect.bodyParser())
-	//.use(auth(require("./securityStrategy.js")()))
-	.use(currentRouter)
-	.use(connect.static(__dirname + "/public"));
+					.use(connect.logger())
+					.use(connect.favicon(__dirname + '/public/favicon.ico'))
+					.use(connect.cookieParser())
+					.use(connect.session({
+    					secret: "secret"
+						}))
+					.use(connect.bodyParser())
+					//.use(auth(require("./securityStrategy.js")()))
+					.use(currentRouter)
+//					.use(connect.static(__dirname + "/plainHtml"))
+					.use(connect.static(__dirname + "/public"));
 server.listen(options.server.port);
-console.log("Server started on port "+options.server.port);
+console.log("Server started on port " + options.server.port);
+
+
+
 
 function checkUserPass(user, pass){
     return 'add' == user & 'may' == pass;
@@ -79,7 +87,11 @@ function saveConfig(request, response, params){
     };
     
     try {
-        fs.writeFileSync("config.json", JSON.stringify(options));
+        if (path.existsSync(configPlace)) {
+            response.end(errorHelper.errorStr("Config file exist. Strange..."));
+            return;
+        }
+        fs.writeFileSync(configPlace, JSON.stringify(options));
         response.end(errorHelper.okStr);
     } 
     catch (error) {
@@ -88,13 +100,10 @@ function saveConfig(request, response, params){
 }
 
 function showConfig(request, response, params){
-    //request.authenticate(['someName'], function(error, authenticated){	
-    //    connect.basicAuth(checkUserPass)(request, response, function(){
     response.writeHead(200, {
         'Content-Type': 'text/html'
     });
     response.end(haml.execute(templates.config));
-    //    });
 }
 
 function showAddQuote(request, response, params){

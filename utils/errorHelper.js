@@ -21,5 +21,5 @@ exports.error = function(errorMessage){
 
 exports.okStr = JSON.stringify(exports.ok);
 exports.errorStr = function(errorMessage){
-    return JSON.stringify(exports.Error(errorMessage))
+    return JSON.stringify(exports.error(errorMessage))
 };

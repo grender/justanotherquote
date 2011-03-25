@@ -17,7 +17,7 @@ body {
     /*
      padding-left: 10px;
      padding-right: 10px;
-     так низя!
+     пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ!
      padding-bottom: 10px;
      padding-top: 10px; */
 }
@@ -145,14 +145,14 @@ body {
 }
 
    a:link {
-    color: #777777; /* Цвет ссылок */
-	text-decoration: none; /* Убираем подчеркивание */
-    border-bottom: 1px dashed #777777; /* Добавляем свою линию */ 
+    color: #777777; /* пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ */
+	text-decoration: none; /* пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ */
+    border-bottom: 1px dashed #777777; /* пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ */ 
    }
    a:visited {
-    color: #777777; /* Цвет ссылок */
-	text-decoration: none; /* Убираем подчеркивание */
-    border-bottom: 1px dashed #777777; /* Добавляем свою линию */ 	
+    color: #777777; /* пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ */
+	text-decoration: none; /* пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ */
+    border-bottom: 1px dashed #777777; /* пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ */ 	
    }
    
    a.noBorder {
@@ -162,6 +162,10 @@ body {
 .jp-audio,#ajaxLoader,#helpLink {
 	display: none;
 }   
+
+#jPlayer {
+	position: absolute;
+}
 
 ul.jp-controls li { display: inline; }
 

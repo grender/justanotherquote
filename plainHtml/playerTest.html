@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <script type="text/javascript" src="./jquery-1.5.min.js">
+        </script>
+        <script type="text/javascript" src="./jquery.jplayer.min.js">
+        </script>
+    </head>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $("#player").jPlayer({
+                swfPath: "./",
+                solution: "flash,html",
+                supplied: "mp3"
+            });
+			$("#setMediaLink").click(function(){
+                    $("#player").jPlayer("setMedia", {
+                        mp3: "https://www.sugarsync.com/pf/D443318_7525460_96758"
+                    });						
+			});
+			
+			$("#playLink").click(function() {
+				$("#player").jPlayer("play");
+			}
+			);
+        });
+    </script>
+    <body>
+    	<a id="setMediaLink">Go</a>
+		<a id="playLink">Play</a>
+        <div id="player">
+        </div>
+    </body>
+</html>
