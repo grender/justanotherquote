@@ -72,6 +72,17 @@ $(document).ready(function(){
 		solution: "flash,html",
 		supplied: "mp3" 		
     });
+
+	$(".jp-audio").mouseenter(showPlayerProgress);
+	$(".jp-audio").mouseleave(hidePlayerProgress);
 });
 
+function showPlayerProgress()
+{
+	$(".fullControl").show('fast');
+}
 
+function hidePlayerProgress()
+{
+	$(".fullControl").hide('fast');
+}

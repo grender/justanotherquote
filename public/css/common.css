@@ -5,21 +5,12 @@ html, body {
     border: none;
     margin-left: auto;
     margin-right: auto;
-    /*width:960px;*/
     font-family: "Segoe UI", sans-serif;
-    /*line-height: 120%;*/
-    /*background-color:#FBFBFB;*/
 }
 
 body {
     margin: 0;
     padding: 0;
-    /*
-     padding-left: 10px;
-     padding-right: 10px;
-     ��� ����!
-     padding-bottom: 10px;
-     padding-top: 10px; */
 }
 
 .wrapper {
@@ -29,9 +20,6 @@ body {
     height: auto !important;
     height: 100%;
     width: 100%;
-    /*min-width: 960px;*/
-    /* background-color:#F7F7F7;*/
-    /*border: 1px solid #D2D2D2;*/
 }
 
 .gradient {
@@ -45,6 +33,7 @@ body {
     #f7f8f7;
     background:
     #f7f8f7\0/;
+
 
 
 
@@ -75,18 +64,10 @@ body {
 .quoteContainer {
 	position:absolute;
 	width:100%;
-	
-	/*
-	top: 50%;
-	height: 10em;
-	margin:0 auto;
-	margin-top:-5em;
-	*/
 }
 	
 .quote {
 	position: absolute;
-	/*margin-left:25%;*/
 }	
 	
 .quoteText	{
@@ -102,6 +83,7 @@ body {
 	text-align: right;
 	margin-top: 1em;
 	margin-left:10em;
+	float:left;
 }
 
 .languageSelector {
@@ -124,7 +106,6 @@ body {
     margin: -3.0em 0 0 0;
     height: 3.0em;
     position: relative;	
-	text-align:right;
 	font-size: 1.2em;
 	vertical-align:bottom;
 	padding-right: 2.5em;	
@@ -145,64 +126,29 @@ body {
 }
 
    a:link {
-    color: #777777; /* ���� ������ */
-	text-decoration: none; /* ������� ������������� */
-    border-bottom: 1px dashed #777777; /* ��������� ���� ����� */ 
+    color: #777777;
+	text-decoration: none;
+    border-bottom: 1px dashed #777777; 
    }
    a:visited {
-    color: #777777; /* ���� ������ */
-	text-decoration: none; /* ������� ������������� */
-    border-bottom: 1px dashed #777777; /* ��������� ���� ����� */ 	
+    color: #777777;
+	text-decoration: none;
+    border-bottom: 1px dashed #777777; 	
    }
    
    a.noBorder {
    	border-bottom: 0px; 
    }
 
-.jp-audio,#ajaxLoader,#helpLink {
+.footerButtonsBar
+{
+
+}
+
+.footerButtonsBarRight {
+
+}
+
+#ajaxLoader,#helpLink {
 	display: none;
-}   
-
-#jPlayer {
-	position: absolute;
-}
-
-ul.jp-controls li { display: inline; }
-
-.jp-progress
-{
-	width: 20em;	
-}
-
-.jp-seek-bar
-{
-	background: #BBBBBB;
-	height: 1em;
-}
-
-.jp-play-bar
-{
-	background: #777777;
-	height: 100%;
-}
-
-.jp-current-time
-{
-	color: white;
-	text-align:right;
-}
-
-.jp-duration
-{
-
-}   
-
-.jp-play,
-.jp-pause,
-.jp-progress,
-.jp-duration {
-	float:left;
-}
-
-#jp_interface_1 {
-}
+}  

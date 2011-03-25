@@ -1,0 +1,60 @@
+.jp-audio {
+	display: none;
+}   
+
+#jPlayer {
+	position: absolute;
+}
+
+ul.jp-controls li { display: inline; }
+
+.fullControl {
+	width: 20em;
+    background: white;
+    border: 1px solid gray;
+    padding: 4px;
+	position: absolute;		
+}
+
+.jp-progress
+{
+	padding: 2px;
+	/* 16px button + 2px default padding*/
+	padding-left: 18px;
+}
+
+.jp-seek-bar
+{
+	background: #BBBBBB;
+	height: 0.4em;
+}
+
+.jp-play-bar
+{
+	background: #777777;
+	height: 0.2em;
+}
+
+
+.jp-current-time,.jp-duration
+{
+	font-size: 0.8em;
+	vertical-align: top;
+}   
+
+.jp-duration {
+	text-align: right;
+}
+
+.jp-audio,
+.jp-playFull,
+.jp-pauseFull {
+/*	float:left; */
+}
+
+.jp-current-time {
+	float:left;
+}
+
+#jp_interface_1 {
+}
