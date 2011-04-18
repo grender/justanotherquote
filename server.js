@@ -4,6 +4,8 @@ var path = require('path');
 var http = require('http');
 var haml = require('haml');
 var connect = require('connect');
+
+var Q = require("q");
 //var auth = require('connect-auth');
 
 var errorHelper = require('./utils/errorHelper.js');
@@ -42,11 +44,16 @@ function init(){
         };
     }
     
-    server = connect.createServer().use(connect.logger()).use(connect.favicon(__dirname + '/public/favicon.ico')).use(connect.cookieParser()).use(connect.session({
-        secret: "secret"
-    })).use(connect.bodyParser())    //.use(auth(require("./securityStrategy.js")()))
-    .use(currentRouter)    //					.use(connect.static(__dirname + "/plainHtml"))
-    .use(connect.static(__dirname + "/public"));
+    server = connect.createServer()
+							.use(connect.logger())
+							.use(connect.favicon(__dirname + '/public/favicon.ico'))
+							.use(connect.cookieParser())
+							.use(connect.session({secret: "secret"}))
+							.use(connect.bodyParser())   
+							//.use(auth(require("./securityStrategy.js")()))
+							.use(currentRouter)
+							//.use(connect.static(__dirname + "/plainHtml"))
+							.use(connect.static(__dirname + "/public"));
     server.listen(options.server.port);
     console.log("Server started on port " + options.server.port);
 }
@@ -117,7 +124,8 @@ function showAddQuote(request, response, params){
     });
 }
 
-function dbGet(path, next){
+function dbGet(path){
+	var result = Q.defer();
     var client = http.createClient(options.db.port, options.db.host);
     var base64authData = "Basic " + new Buffer(options.db.user + ":" + options.db.pass, 'binary').toString('base64');
     
@@ -131,14 +139,14 @@ function dbGet(path, next){
             dbRespBody += chunk;
         });
         dbResp.on("end", function(){
-            next(null, JSON.parse(dbRespBody));
+			result.resolve(JSON.parse(dbRespBody));
         });
         dbResp.on("error", function(){
-            console.log("Error getting quote from DB");
-            next("Error getting quote from DB", null);
+			result.reject("Error getting quote from DB");
         });
     });
     dbReq.end();
+	return result.promise;
 }
 
 function showBodyPage(request, response){
@@ -153,34 +161,28 @@ function showOneQuote(request, response){
         'Content-Type': 'application/json'
     });
     
-    dbGet("_all_docs", function(error, result){
-        if (error) {
-            response.end(errorHelper.errorStr(error));
-            return;
-        }
-        
-        if (result == null || result.total_rows == 0) {
-            var quote = {
-                quote: "No quote,",
-                quoteSource: "No author"
-            };
-            response.end(JSON.stringify(quote));
-        }
-        else {
-            var quoteId = result.rows[Math.floor(Math.random() * result.total_rows)].id;
-            // TODO: Do dbGet -sync to make that 
-            //if(request.params.id)
-            //	quoteId=request.params.id;
-            dbGet(quoteId, function(error, quote){
-                if (error) {
-                    console.log("Error on getting from DB(" + error + ")");
-                    response.end(errorHelper.errorStr(error));
-                    return;
-                }
+	var randomObject=Q.when(dbGet("_all_docs"),function(result) {
+								if (result == null || result.total_rows == 0) {
+									var quote = {
+										quote: "No quote.",
+										quoteSource: "No author"
+									};
+									randomObject.resolve(quote);
+								}
+								var objId = result.rows[Math.floor(Math.random() * result.total_rows)].id;
+								return Q.when(dbGet(objId),function(obj) {
+										return obj;
+									});
+								}
+							);	
+    Q.when(randomObject
+			, function(quote){
                 quote.quote = quote.quote.replace(/\n/g, "<br>");
-                quote.quoteSource = quote.quoteSource.replace(/\n/g, "<br>");
-                response.end(JSON.stringify(quote));
-            });
-        }
-    });
+                quote.quoteSource = quote.quoteSource.replace(/\n/g, "<br>");			
+				response.end(JSON.stringify(quote));
+			  }
+			, function(error){
+				response.end(errorHelper.errorStr(error));
+			  }
+		  );
 }

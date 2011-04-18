@@ -66,17 +66,17 @@ body {
 	width:100%;
 }
 	
-.quote {
+#quote {
 	position: absolute;
 }	
 	
-.quoteText	{
+#quoteText	{
 	font-family:"Segoe UI",sans-serif;
 	font-size: 220%;
 	text-align: left;
 }
 
-.quoteSource {
+#quoteSource {
 	font-family:"Segoe UI",sans-serif;
 	font-style: italic;
 	font-size: 110%;

@@ -1,0 +1,36 @@
+﻿<html>
+<head>
+	<script type="text/javascript">
+	console.log("started");
+	onload();
+	window.onload = onload;
+	
+	function onload() {
+		console.log("onload started");
+		document.getElementById("button").onclick = downloadQuote;
+		console.log("onload ended");
+	};
+	
+	function downloadQuote()
+	{
+		var xmlhttp=new XMLHttpRequest();
+		xmlhttp.open("GET","/api/getRandomQuote",true);
+		xmlhttp.onreadystatechange = function() {
+		  if (xmlhttp.readyState === 4) {
+				if(xmlhttp.status === 200) {
+					var quote = JSON.parse(xmlhttp.responseText);
+					document.getElementById("quote").innerHTML=quote.quote;
+					document.getElementById("source").innerHTML=quote.quoteSource;
+				}
+		  }
+		};
+		xmlhttp.send(null);
+	}
+	</script>
+</head>
+<body>
+<button id="button">Get</button>
+<div id="quote"></div>
+<div id="source"></div>
+</body>
+</html>
