@@ -2,110 +2,26 @@ window.onload = function(){
 	window.document.body.onload = init();
 };
 
-function getJSON(url,callback)
-{
-	var xmlhttp=new XMLHttpRequest();
-	xmlhttp.open("GET",url,true);
-	xmlhttp.onreadystatechange = function() {
-		if (xmlhttp.readyState === 4) {
-			if(xmlhttp.status === 200) {
-				callback(JSON.parse(xmlhttp.responseText));
-			}
-		}
-	};
-	xmlhttp.send(null);	
-}
-
-function findElement(id,cssClass)
-{
-	var results = [];
-	
-	function checkClassList(node,classList)
-	{
-		if( current.classList)
-		{
-			if(classList instanceof Array) {
-				for(var key in classList) {
-					if(!current.classList.contains(classList[key])) {
-						return false;
-					}
-				}
-			} else {
-				if(current.classList.contains(classList))
-					return true;
-			}
-		}
-		return false;				
-	}
-	
-	function find(where) {	
-		for(var childItem in where.childNodes)
-		{
-			var current=where.childNodes[childItem];
-			// если задан только id
-			if(id!=="" && current.id === id)
-			{
-				// проверяем что у этого id есть нужные классы
-				if( cssClass === undefined || checkClassList(current,cssClass)) {
-					return current;
-				}else {
-					return;
-				}
-			}
-				
-			if( cssClass !== undefined ) {
-				if(checkClassList(current,cssClass))
-					results.push(current);
-			}
-			var res=find(current);
-			if(res !== undefined)
-				return res;
-		}
-	};
-
-	
-	var result=find(document.body);
-
-	if (results.length !== 0)
-		return results;
-	return result;
-}
-
 function newCenterQuote() {
-    var quote = findElement("quote");
-    var quoteText = findElement("quoteText");
-    var quoteSource = findElement("quoteSource");	
+    var quote = _$("#quote");
+    var quoteText = _$("#quoteText");
+    var quoteSource = _$("#quoteSource");	
     var quoteWidth = quoteText.clientWidth;
     var quoteHeight = quoteText.clientHeight + quoteSource.clientHeight;
     var docHeight = document.body.clientHeight;
     var docWidth = document.body.clientWidth;
     var posX = docWidth / 2 - quoteWidth / 2;
     var posY = docHeight / 2 - quoteHeight / 2;
-	quote.style.setProperty("margin-left", posX + "px", "");
-	quote.style.setProperty("margin-top", posY + "px", "");
-}
-
-function centerQuote(){
-    var quote = $("#quote");
-    var quoteText = $("#quoteText");
-    var quoteSource = $("#quoteSource");
-    
-    var quoteWidth = quoteText.width();
-    var quoteHeight = quoteText.height() + quoteSource.height();
-    var docHeight = $(document).height();
-    var docWidth = $(document).width();
-    var posX = docWidth / 2 - quoteWidth / 2;
-    var posY = docHeight / 2 - quoteHeight / 2;
-    quote.css("margin-left", posX + "px");
-    quote.css("margin-top", posY + "px");
+	css(quote,"margin-left", posX + "px");
+	css(quote,"margin-top", posY + "px");
 }
 
 function setQuoteOnPage(quote){
-    $("#quoteText").html(quote.quote);
+    _$("#quoteText").innerHTML=quote.quote;
     if (quote.quoteSource == "") 
-        $("#quoteSource").html("");
+        _$("#quoteSource").innerHTML="";
     else 
-        $("#quoteSource").html('&mdash;&nbsp;' + quote.quoteSource);
+        _$("#quoteSource").innerHTML='&mdash;&nbsp;' + quote.quoteSource;
     if (quote.mp3link) {
 		$(".jp-audio").toggle(true);
         $("#jPlayer").jPlayer("setMedia", {
