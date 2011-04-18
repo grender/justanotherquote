@@ -53,7 +53,7 @@ function _$(qweryStr)
 	var classRegExp = /\.[\w\-]+/g;
 	var id=(t=qweryStr.match(idRegExp))? t[1] : "";
 	var classes=(t=qweryStr.match(classRegExp))? t : "";
-	for(var i in classes)
+	for(var i=0;i<classes.length;i++)
 		classes[i] = classes[i].substring(1,classes[i].length)
 	return findElement(id,classes);
 }
