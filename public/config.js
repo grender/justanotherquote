@@ -11,7 +11,7 @@ function saveForm(){
         dbPass: $("#dbPass").val(),
 		serverPort: $("#serverPort").val()
     };
-    
+    var resultPort=result.serverPort;
 	setDownloadState(true);
     $.ajax({
         type: 'POST',
@@ -19,8 +19,12 @@ function saveForm(){
         data: result,
         dataType: "json"
     }).success(function(result){
-		if(!result.isSuccess)
+		if(result.isSuccess) {
+			alert("All ok. Redirecting...");
+			window.location = "http://"+window.location.hostname + (resultPort===80 ? "" : ":"+resultPort);
+		} else {
 			showError(result.message);
+		}
 		setDownloadState(false);
     }).error(function(){
         showError("Error working with server...");
