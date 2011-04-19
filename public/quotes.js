@@ -37,8 +37,9 @@ function setQuoteOnPage(quote){
 function getNewQuote(){
     setDownloadState(true);
 	$("#jPlayer").jPlayer("stop");
-    $("#quote").fadeOut('fast', function(){
-        getJSON("/api/getRandomQuote", function(json){
+	
+	fadeOut(_$("#quote"),500, function(){
+        getJSON("/api/getRandomQuote?"+Math.random(), function(json){
             if (json.error) {
                 alert(json.error + "\n" + json.errorInfo);
                 json = {
@@ -48,7 +49,7 @@ function getNewQuote(){
             }
             setQuoteOnPage(json);
             setDownloadState(false);
-            $("#quote").fadeIn('fast');
+			fadeIn(_$("#quote"),500);
             newCenterQuote();
         });
     });
@@ -67,7 +68,7 @@ function hideHelp(){
 
 
 function init(){
-    $("#nextQuoteLink").click(getNewQuote);
+    _$("#nextQuoteLink").onclick=getNewQuote;
     $("#helpLink").click(showHelp);
     $(".helpDiv").click(hideHelp);
     getNewQuote();

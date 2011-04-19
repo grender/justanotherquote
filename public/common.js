@@ -1,3 +1,20 @@
+if (!Array.prototype.forEach)
+{
+  Array.prototype.forEach = function(fun /*, thisp*/)
+  {
+    var len = this.length;
+    if (typeof fun != "function")
+      throw new TypeError();
+
+    var thisp = arguments[1];
+    for (var i = 0; i < len; i++)
+    {
+      if (i in this)
+        fun.call(thisp, this[i], i, this);
+    }
+  };
+}
+
 function setDownloadState(isDownload){
 	_$(".whenDownloadHide").forEach(function(elem){toggle(elem,!isDownload);});
 	_$(".whenDownloadShow").forEach(function(elem){toggle(elem,isDownload);});
@@ -113,9 +130,36 @@ function findElement(id,cssClass)
 	return results;
 }
 
+function animate(elem,prop,period,from,to,callback)
+{
+	var begin=new Date().valueOf();
+	var end=begin+period;
+	var delta=(to-from)/period;
 
+	(function() {
+		now=new Date().valueOf();
+		if(now<end)
+		{
+			var newVal=(now-begin)*delta+from;
+			css(elem,prop,newVal);
+			setTimeout(arguments.callee,50);
+		}else {
+			css(elem,prop,to);
+			if(callback instanceof Function)
+				callback();
+		}
+	})();
+}
 
+function fadeOut(elem,period,callback)
+{
+	animate(elem,'opacity',period,1,0,callback);
+}
 
+function fadeIn(elem,period,callback)
+{
+	animate(elem,'opacity',period,0,1,callback);
+}
 
 var _gaq = _gaq || [];
 _gaq.push(['_setAccount', 'UA-21693376-1']);
