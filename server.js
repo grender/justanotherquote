@@ -179,7 +179,7 @@ function showOneQuote(request, response){
 			, function(quote){
                 quote.quote = quote.quote.replace(/\n/g, "<br>");
                 quote.quoteSource = quote.quoteSource.replace(/\n/g, "<br>");			
-				response.end(JSON.stringify(quote));
+				response.end(JSON.stringify(quote,["quote","quoteSource"]));
 			  }
 			, function(error){
 				response.end(errorHelper.errorStr(error));
