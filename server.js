@@ -40,7 +40,7 @@ function init(){
         currentRouter = connect.router(routes);
         templates = {
             oneQuote: haml.optimize(haml.compile(fs.readFileSync('./templates/oneQuote.haml', "utf8"))),
-            addQuote: haml.optimize(haml.compile(fs.readFileSync('./templates/addQuote.haml', "utf8"))),
+            addQuote: haml.optimize(haml.compile(fs.readFileSync('./templates/addQuote.haml', "utf8")))
         };
     }
     
@@ -54,6 +54,8 @@ function init(){
 							.use(currentRouter)
 							//.use(connect.static(__dirname + "/plainHtml"))
 							.use(connect.static(__dirname + "/public"));
+    if(process.env.C9_PORT)
+        options.server.port=process.env.C9_PORT;
     server.listen(options.server.port);
     console.log("Server started on port " + options.server.port);
 }
@@ -71,7 +73,7 @@ function routes(app){
 
 function checkUserPass(user, pass){
     return 'add' == user & 'may' == pass;
-};
+}
 
 function saveConfig(request, response, params){
     var clientOptions = request.body;

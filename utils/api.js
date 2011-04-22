@@ -1,4 +1,4 @@
-﻿var Q = require("q");
+var Q = require("q");
 var errorHelper = require('./errorHelper.js');
 var http = require('http');
 
@@ -57,4 +57,4 @@ exports.getApi = function(newOptions) {
 	return {
 		getRandomQuote : getRandomQuote
 	};
-}
+};
