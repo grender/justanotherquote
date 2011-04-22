@@ -52,9 +52,9 @@ function getRandomQuote() {
 	return randomObject.promise;
 }
 
-exports.getApi = function(newOptions) {
-	options = newOptions;
-	return {
-		getRandomQuote : getRandomQuote
-	};
+module.exports = {
+    getRandomQuote : getRandomQuote,
+    setOptions: function(newOptions) {
+                    options = newOptions;
+                }
 };

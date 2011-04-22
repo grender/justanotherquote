@@ -9,6 +9,7 @@ var Q = require("q");
 //var auth = require('connect-auth');
 
 var errorHelper = require('./utils/errorHelper.js');
+var api = require('./utils/api.js');
 
 var templates;
 var currentRouter;
@@ -17,7 +18,6 @@ var configPlace = './config.json';
 var DEFAULT_CONFIG_PORT = 65000;
 var options;
 init();
-var api = require('./utils/api.js').getApi(options);
 
 function init(){
     var configMode = false;
@@ -54,8 +54,9 @@ function init(){
 							.use(currentRouter)
 							//.use(connect.static(__dirname + "/plainHtml"))
 							.use(connect.static(__dirname + "/public"));
+    api.setOptions(options);
     if(process.env.C9_PORT)
-        options.server.port=process.env.C9_PORT;
+        options.server.port=process.env.C9_PORT;    
     server.listen(options.server.port);
     console.log("Server started on port " + options.server.port);
 }
@@ -66,7 +67,7 @@ function configRoutes(app){
 }
 
 function routes(app){
-    app.get('/api/getRandomQuote', showOneQuote);
+    app.get('/api/:methodName', runApiMethod);
     app.get('/add', showAddQuote);
     app.get('/', showBodyPage);
 }
@@ -127,11 +128,21 @@ function showAddQuote(request, response, params){
 }
 
 
-function showOneQuote(request, response){
+function runApiMethod(request, response){
+    var method=request.params.methodName;
+    var func=api[method];
+    if(func === undefined) {
+        response.writeHead(404, {
+            'Content-Type': 'text/plain'
+        });        
+        response.end("No method");
+        return;
+    }
+    
     response.writeHead(200, {
         'Content-Type': 'text/json'
     });
-	Q.when(api.getRandomQuote()
+	Q.when(func.call(api, request)
 		, function(quote) {
 			response.end(quote);
 		}
@@ -147,4 +158,3 @@ function showBodyPage(request, response){
     });
     response.end(haml.execute(templates.oneQuote));
 }
-
