@@ -9,15 +9,15 @@ var Q = require("q");
 //var auth = require('connect-auth');
 
 var errorHelper = require('./utils/errorHelper.js');
+
 var templates;
 var currentRouter;
 var server;
-
 var configPlace = './config.json';
 var DEFAULT_CONFIG_PORT = 65000;
 var options;
-
 init();
+var api = require('./utils/api.js').getApi(options);
 
 function init(){
     var configMode = false;
@@ -124,29 +124,19 @@ function showAddQuote(request, response, params){
     });
 }
 
-function dbGet(path){
-	var result = Q.defer();
-    var client = http.createClient(options.db.port, options.db.host);
-    var base64authData = "Basic " + new Buffer(options.db.user + ":" + options.db.pass, 'binary').toString('base64');
-    
-    var dbReq = client.request("GET", options.db.path + path, {
-        host: options.db.host,
-        authorization: base64authData
+
+function showOneQuote(request, response){
+    response.writeHead(200, {
+        'Content-Type': 'text/json'
     });
-    dbReq.on('response', function(dbResp){
-        var dbRespBody = "";
-        dbResp.on("data", function(chunk){
-            dbRespBody += chunk;
-        });
-        dbResp.on("end", function(){
-			result.resolve(JSON.parse(dbRespBody));
-        });
-        dbResp.on("error", function(){
-			result.reject("Error getting quote from DB");
-        });
-    });
-    dbReq.end();
-	return result.promise;
+	Q.when(api.getRandomQuote()
+		, function(quote) {
+			response.end(quote);
+		}
+		, function(error) {
+			response.end(error);
+		}
+	);
 }
 
 function showBodyPage(request, response){
@@ -156,33 +146,3 @@ function showBodyPage(request, response){
     response.end(haml.execute(templates.oneQuote));
 }
 
-function showOneQuote(request, response){
-    response.writeHead(200, {
-        'Content-Type': 'application/json'
-    });
-    
-	var randomObject=Q.when(dbGet("_all_docs"),function(result) {
-								if (result == null || result.total_rows == 0) {
-									var quote = {
-										quote: "No quote.",
-										quoteSource: "No author"
-									};
-									randomObject.resolve(quote);
-								}
-								var objId = result.rows[Math.floor(Math.random() * result.total_rows)].id;
-								return Q.when(dbGet(objId),function(obj) {
-										return obj;
-									});
-								}
-							);	
-    Q.when(randomObject
-			, function(quote){
-                quote.quote = quote.quote.replace(/\n/g, "<br>");
-                quote.quoteSource = quote.quoteSource.replace(/\n/g, "<br>");			
-				response.end(JSON.stringify(quote,["quote","quoteSource"]));
-			  }
-			, function(error){
-				response.end(errorHelper.errorStr(error));
-			  }
-		  );
-}
