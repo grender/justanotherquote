@@ -41,8 +41,8 @@ function getRandomQuote() {
 								var objId = result.rows[Math.floor(Math.random() * result.total_rows)].id;
 								return Q.when(dbGet(objId),function(quote) {
 										quote.quote = quote.quote.replace(/\n/g, "<br>");
-										quote.quoteSource = quote.quoteSource.replace(/\n/g, "<br>");			
-										randomObject.resolve(JSON.stringify(quote,["quote","quoteSource"]));
+										quote.quoteSource = quote.quoteSource.replace(/\n/g, "<br>");										
+										randomObject.resolve(JSON.stringify(quote,["quote","quoteSource","mp3link"]));
 									});
 								}
 							, function(error) {

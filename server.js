@@ -23,7 +23,6 @@ function init(){
     var configMode = false;
     if (!path.existsSync(configPlace)) 
         configMode = true;
-    
     if (configMode) {
         options = {
             server: {

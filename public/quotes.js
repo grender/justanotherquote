@@ -74,7 +74,7 @@ function init(){
     getNewQuote();
     $("#jPlayer").jPlayer({
         swfPath: "./",
-		solution: "flash,html",
+		solution: "html,flash",
 		supplied: "mp3" 		
     });
 

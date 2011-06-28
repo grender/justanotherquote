@@ -25,30 +25,30 @@
         .quoteContainder
           #quote
             #quoteText
-            #quoteSource               
+            #quoteSource
     .footer
       .footerButtonsBar
         .footerButtonsBarRight
           .whenDownloadHide
-            .jp-audio
-              .jp-type-single
-                .jp-interface#jp_interface_1
-                  .jp-play
-                    %img(src="./images/control_play.png")
-                  .jp-pause
-                    %img(src="./images/control_pause.png")                
-                  .fullControl
-                    .jp-play.jp-playFull
+            #rightButtonsPane
+              .jp-audio
+                .jp-type-single
+                  .jp-interface#jp_interface_1
+                    .jp-play
                       %img(src="./images/control_play.png")
-                    .jp-pause.jp-playFull
-                      %img(src="./images/control_pause.png")                    
-                    .jp-progress     
-                      .jp-seek-bar
-                        .jp-play-bar
-                      .jp-current-time
-                      .jp-duration   
-            #nextQuoteLink
-              %a(href="#")
+                    .jp-pause
+                      %img(src="./images/control_pause.png")
+                    .fullControl
+                      .jp-play.jp-playFull
+                        %img(src="./images/control_play.png")
+                      .jp-pause.jp-playFull
+                        %img(src="./images/control_pause.png")
+                      .jp-progress     
+                        .jp-seek-bar
+                          .jp-play-bar
+                        .jp-current-time
+                        .jp-duration
+              %a#nextQuoteLink(href="#")
                 ...
               %a#helpLink(href="#")
                 ?                  
